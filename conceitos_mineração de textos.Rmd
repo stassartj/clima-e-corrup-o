@@ -27,7 +27,7 @@ transporte_tudo<- transporte_tudo %>%
   map(rename, "Abstract" = Custom1)
 ```
 
-```{r nuvem de palavras}
+```{r tokens}
 library("wordcloud")
 library("tm")
 library("tidytext")
@@ -44,7 +44,10 @@ stopwords <- get_stopwords(language="en") %>%
 
 tokens_transporte<- tokens_transporte %>%
   map(anti_join, stopwords, by ="palavra")
+```
 
+
+```{r nuvem de palavras}
 tokens_transporte %>%  
   map(pull, palavra) %>% 
   map(wordcloud)
