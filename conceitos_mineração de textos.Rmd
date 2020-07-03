@@ -22,7 +22,9 @@ transporte3<- read.csv("sc_direct_transporte3.csv",colClasses = "character")
 
 transporte_tudo <- list(transporte1, transporte2, transporte3)
 
-transporte_tudo<- transporte_tudo %>% map(select, c(Author,Title, Custom1)) %>% map(rename, "Abstract" = Custom1)
+transporte_tudo<- transporte_tudo %>% 
+  map(select, c(Author,Title, Custom1)) %>% 
+  map(rename, "Abstract" = Custom1)
 ```
 
 ```{r nuvem de palavras}
@@ -40,19 +42,22 @@ tokens_transporte <- transporte_tudo %>%
 stopwords <- get_stopwords(language="en") %>%
   rename(palavra=word)
 
+tokens_transporte<- tokens_transporte %>%
+  map(anti_join, stopwords, by ="palavra")
 
-tokens_transporte<- tokens_transporte %>% map(anti_join, stopwords, by ="palavra")
-
-#transporte_tudo %>%  map(pull, Abstract) %>% map(wordcloud)
-tokens_transporte %>%  map(pull, palavra) %>% map(wordcloud)
+tokens_transporte %>%  
+  map(pull, palavra) %>% 
+  map(wordcloud)
 
 
 ```
 
-```{r}
+```{r transporte_frequencia de conceitos }
 
 
-freq_conceitos <- tokens_transporte %>%  map(filter, palavra %in% c("bribery", "lobbying", "fraud", "influence", "abuse", "capture", "nepotism", "extortion", "Grand" , "Petty", "corruption") ) %>% map(count, palavra)
+freq_conceitos <- tokens_transporte %>%  
+  map(filter, palavra %in% c("bribery", "lobbying", "fraud", "influence", "abuse", "capture", "nepotism", "extortion", "Grand" , "Petty", "corruption") ) %>% 
+  map(count, palavra)
 
 
 ```
