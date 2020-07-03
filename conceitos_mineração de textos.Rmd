@@ -12,6 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library("knitr")
 
+
 library(tidyverse)
 ```
 
@@ -22,7 +23,7 @@ transporte3<- read.csv("sc_direct_transporte3.csv",colClasses = "character")
 
 transporte_tudo <- list(transporte1, transporte2, transporte3)
 
-transporte_tudo<- transporte_tudo %>% 
+transporte_tudo <- transporte_tudo %>% 
   map(select, c(Author,Title, Custom1)) %>% 
   map(rename, "Abstract" = Custom1)
 ```
