@@ -2,29 +2,63 @@
 title: "conceitos_mineração de textos"
 author: "Joachim"
 date: "03/07/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library("knitr")
+
+library(tidyverse)
 ```
 
-## R Markdown
+```{r importação de dados}
+transporte1<- read.csv("sc_direct_transporte1.csv", colClasses = "character")
+transporte2<- read.csv("sc_direct_transporte2.csv",colClasses = "character") 
+transporte3<- read.csv("sc_direct_transporte3.csv",colClasses = "character") 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+transporte_tudo <- list(transporte1, transporte2, transporte3)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+transporte_tudo<- transporte_tudo %>% map(select, c(Author,Title, Custom1)) %>% map(rename, "Abstract" = Custom1)
 ```
 
-## Including Plots
+```{r nuvem de palavras}
+library("wordcloud")
+library("tm")
+library("tidytext")
+library("textstem")
+library("lexiconPT")
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+tokens_transporte <- transporte_tudo %>%
+ map(unnest_tokens, palavra, Abstract, strip_numeric=TRUE) 
+
+
+stopwords <- get_stopwords(language="en") %>%
+  rename(palavra=word)
+
+
+tokens_transporte<- tokens_transporte %>% map(anti_join, stopwords, by ="palavra")
+
+#transporte_tudo %>%  map(pull, Abstract) %>% map(wordcloud)
+tokens_transporte %>%  map(pull, palavra) %>% map(wordcloud)
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+
+
+freq_conceitos <- tokens_transporte %>%  map(filter, palavra %in% c("bribery", "lobbying", "fraud", "influence", "abuse", "capture", "nepotism", "extortion", "Grand" , "Petty", "corruption") ) %>% map(count, palavra)
+
+
+```
+
+
+```{r}
+
+```
+
